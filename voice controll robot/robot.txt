@@ -1,0 +1,134 @@
+#include <Servo.h>
+#include <SoftwareSerial.h>
+// Declare the Servo pin 
+ 
+// Create a servo object 
+Servo Servo1; 
+int servoPin = 9;
+#define servoPin2 10
+#define servoPin3 11
+SoftwareSerial BT(0, 1); //TX, RX respetively
+String readvoice;
+
+void setup() {
+ BT.begin(9600);
+ Serial.begin(9600);
+  pinMode(4, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+
+   // We need to attach the servo to the used pin number 
+   Servo1.attach(servoPin); 
+
+}
+//-----------------------------------------------------------------------// 
+void loop() {
+  // Make servo go to 0 degrees 
+   Servo1.write(90); 
+   delay(1000); 
+   // Make servo go to 45 degrees 
+   Servo1.write(45); 
+   delay(2000); 
+  
+  while (BT.available()){  //Check if there is an available byte to read
+  delay(10); //Delay added to make thing stable
+  char c = BT.read(); //Conduct a serial read
+  readvoice += c; //build the string- "forward", "reverse", "left" and "right"
+  
+  } 
+  if (readvoice.length() > 0) {
+    Serial.println(readvoice);
+
+  if(readvoice == "*forward#")
+  {
+    digitalWrite(3, LOW);
+    digitalWrite (4, HIGH);
+    digitalWrite(5,LOW);
+    digitalWrite(6,HIGH);
+   delay(1000);
+  }
+
+  else if(readvoice == "*back#")
+  {
+      digitalWrite(3, HIGH);
+    digitalWrite(4, LOW);
+    digitalWrite(5, HIGH);
+    digitalWrite(6,LOW);
+   delay(1000);
+  }
+
+  else if (readvoice == "*left#")
+  {
+    digitalWrite (3,HIGH);
+    digitalWrite (4,LOW);
+    digitalWrite (5,LOW);
+    digitalWrite (6,LOW);
+  delay (800);
+      digitalWrite(3, LOW);
+    digitalWrite (4, LOW);
+    digitalWrite(5,LOW);
+    digitalWrite(6,LOW);
+     delay(1000);
+  
+  }
+
+ else if ( readvoice == "*right#")
+ {
+   digitalWrite (3, LOW);
+   digitalWrite (4, LOW);
+   digitalWrite (5, HIGH);
+   digitalWrite (6, LOW);
+    delay (800);
+      digitalWrite(3, LOW);
+    digitalWrite (4, LOW);
+    digitalWrite(5,LOW);
+    digitalWrite(6,LOW);
+     delay(1000);
+ }
+
+ else if (readvoice == "*stop#")
+ {
+   digitalWrite (3, LOW);
+   digitalWrite (4, LOW);
+   digitalWrite (5, LOW);
+   digitalWrite (6, LOW);
+    delay(1000);
+   
+ }
+ 
+
+if(readvoice == "*left hands up#")
+  {
+    digitalWrite(servoPin2, HIGH);
+    delayMicroseconds(1450); 
+    digitalWrite(servoPin2, LOW);
+    delayMicroseconds(18550);
+    
+  }
+  if(readvoice == "*hello#")
+  {
+    digitalWrite(servoPin3, HIGH);
+    delayMicroseconds(1450); 
+    digitalWrite(servoPin3, LOW);
+    delayMicroseconds(18550);
+    
+  }
+else if(readvoice == "*left hands down#")
+  {
+     digitalWrite(servoPin2, HIGH);
+    delayMicroseconds(700); 
+    digitalWrite(servoPin2, LOW);
+    delayMicroseconds(18550);
+  
+    }
+    else if(readvoice == "*thanks#")
+  {
+     digitalWrite(servoPin3, HIGH);
+    delayMicroseconds(700); 
+    digitalWrite(servoPin3, LOW);
+    delayMicroseconds(18550);
+  
+    
+  }
+ readvoice="";}} //Reset the variable
